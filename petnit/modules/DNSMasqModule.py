@@ -46,7 +46,7 @@ class DNSMasqModule(BaseModule):
 			print("dhcp-range=%s,%s,12h" % (dhcp_begin, dhcp_end), file = f)
 			print("dhcp-leasefile=%s" % (self._leasefile), file = f)
 
-		procout = subprocess.STDOUT if _log.isEnabledFor(logging.DEBUG) else subprocess.DEVNULL
+		procout = None if _log.isEnabledFor(logging.DEBUG) else subprocess.DEVNULL
 		self._proc = subprocess.Popen([ "dnsmasq", "-C", config_filename, "-k" ], stdout = procout, stderr = procout)
 
 	def stop(self):

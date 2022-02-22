@@ -42,7 +42,7 @@ class MitMModule(BaseModule):
 				cmd += [ "--intercept", hostname ]
 		cmd += [ "-o", self._ctrlr.session.persistent_file("mitm.pcapng") ]
 
-		procout = subprocess.STDOUT if _log.isEnabledFor(logging.DEBUG) else subprocess.DEVNULL
+		procout = None if _log.isEnabledFor(logging.DEBUG) else subprocess.DEVNULL
 		self._proc = subprocess.Popen(cmd, stdout = procout, stderr = procout)
 
 		self._ipt = IPTablesRules()
