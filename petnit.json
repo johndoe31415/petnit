@@ -1,0 +1,8 @@
+{
+	"interfaces": {
+		"egress": 		"eth0.102",
+		"dut":			"eth0.103"
+	},
+	"sessions": "/srv/petnit",
+	"default_modules": [ "masquerade", "dnsmasq", "tcpdump", "mitm" ]
+}
