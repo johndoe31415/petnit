@@ -31,7 +31,9 @@ class TCPDumpModule(BaseModule):
 		interface = self._ctrlr.config["interfaces"]["dut"]
 		filesize_mb = 10
 		_log.info("Starting tcpdump on %s, maximum PCAP filesize %d MB", interface, filesize_mb)
-		self._proc = subprocess.Popen([ "tcpdump", "-n", "-s", "0", "--packet-buffered", "-C", str(filesize_mb), "-w", self._ctrlr.session.persistent_file("packet_dump.pcap") ], stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL)
+
+		procout = subprocess.STDOUT if _log.isEnabledFor(logging.DEBUG) else subprocess.DEVNULL
+		self._proc = subprocess.Popen([ "tcpdump", "-n", "-s", "0", "--packet-buffered", "-C", str(filesize_mb), "-w", self._ctrlr.session.persistent_file("packet_dump.pcap") ], stdout = procout, stderr = procout)
 
 	def stop(self):
 		self._proc.kill()

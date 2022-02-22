@@ -41,7 +41,9 @@ class MitMModule(BaseModule):
 			for hostname in mitm_hosts:
 				cmd += [ "--intercept", hostname ]
 		cmd += [ "-o", self._ctrlr.session.persistent_file("mitm.pcapng") ]
-		self._proc = subprocess.Popen(cmd, stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL)
+
+		procout = subprocess.STDOUT if _log.isEnabledFor(logging.DEBUG) else subprocess.DEVNULL
+		self._proc = subprocess.Popen(cmd, stdout = procout, stderr = procout)
 
 		self._ipt = IPTablesRules()
 		for target_port in target_ports:
