@@ -28,6 +28,10 @@ _log = logging.getLogger(__spec__.name)
 
 @BaseModule.register("mitm")
 class MitMModule(BaseModule):
+	def _set_local_net_forward(value):
+		with open("/proc/sys/net/ipv4/conf/all/route_localnet", "w") as f:
+			print(str(value), file = f)
+
 	def start(self):
 		mitm_hosts = [ ]
 		target_ports = [ 443 ]
@@ -45,6 +49,7 @@ class MitMModule(BaseModule):
 		procout = None if _log.isEnabledFor(logging.DEBUG) else subprocess.DEVNULL
 		self._proc = subprocess.Popen(cmd, stdout = procout, stderr = procout)
 
+		self._set_local_net_forward("1")
 		self._ipt = IPTablesRules()
 		for target_port in target_ports:
 			self._ipt.add("nat", "PREROUTING", [ "-i", interface, "-p", "tcp", "--dport", str(target_port), "-j", "DNAT", "--to", "127.0.0.1:9999" ])
@@ -52,3 +57,4 @@ class MitMModule(BaseModule):
 	def stop(self):
 		self._ipt.remove_all()
 		self._proc.kill()
+		self._set_local_net_forward("0")
