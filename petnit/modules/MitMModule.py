@@ -28,6 +28,7 @@ _log = logging.getLogger(__spec__.name)
 
 @BaseModule.register("mitm")
 class MitMModule(BaseModule):
+	@staticmethod
 	def _set_local_net_forward(value):
 		with open("/proc/sys/net/ipv4/conf/all/route_localnet", "w") as f:
 			print(str(value), file = f)
