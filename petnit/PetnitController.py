@@ -60,10 +60,10 @@ class PetnitController():
 
 	def run(self):
 		try:
-			if len(self._args.modules) == 0:
+			if len(self._args.module) == 0:
 				module_names = self.config["default_modules"]
 			else:
-				module_names = self._args.modules
+				module_names = self._args.module
 			for module_name in module_names:
 				self.start_module(module_name)
 			while True:
