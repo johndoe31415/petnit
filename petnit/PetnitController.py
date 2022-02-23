@@ -45,6 +45,8 @@ class PetnitController():
 		if self._running.get("name") is not None:
 			raise Exception("Module %s is already running." % (name))
 
+		if args is None:
+			args = { }
 		self._running[name] = BaseModule.instanciate(name, self, args)
 		self._running[name].start()
 
@@ -58,14 +60,26 @@ class PetnitController():
 		for mod in self._running:
 			self.stop_module(mod)
 
+	def lookup_module(self, name, args = None):
+		if args is None:
+			args = { }
+		if name not in self._config.get("module_aliases", { }):
+			yield (name, args)
+		else:
+			for surrogate in self._config["module_aliases"][name]:
+				yield from self.lookup_module(name = surrogate["name"], args = surrogate.get("args"))
+
 	def run(self):
 		try:
 			if len(self._args.module) == 0:
-				module_names = self.config["default_modules"]
+				module_src = self.config["default_modules"]
 			else:
-				module_names = self._args.module
-			for module_name in module_names:
-				self.start_module(module_name)
+				module_src = self._args.module
+			for module_def in module_src:
+				src_module_name = module_def["name"]
+				src_module_args = module_def.get("args", { })
+				for (module_name, module_args) in self.lookup_module(src_module_name, src_module_args):
+					self.start_module(module_name, args = module_args)
 			while True:
 				time.sleep(1)
 		finally:

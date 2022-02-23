@@ -1,8 +1,36 @@
 {
 	"interfaces": {
 		"egress": 		"eth0.102",
-		"dut":			"eth0.103"
+		"dut":			"br0"
 	},
+
 	"sessions": "/srv/petnit",
-	"default_modules": [ "masquerade", "dnsmasq", "tcpdump", "mitm" ]
+
+	"module_aliases": {
+		"mitm-port8443": [
+			{
+				"name": "mitm",
+				"args": {
+					"ports": [ 8443 ]
+				}
+			}
+		],
+
+		"mitm-special-target": [
+			{
+				"name": "mitm",
+				"args": {
+					"ports": [ 443 ],
+					"hosts": [ "johannes-bauer.com" ]
+				}
+			}
+		]
+	},
+
+	"default_modules": [
+		{ "name": "masquerade" },
+		{ "name": "dnsmasq" },
+		{ "name": "tcpdump" },
+		{ "name": "mitm" }
+   ]
 }

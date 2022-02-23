@@ -29,7 +29,7 @@ _log = logging.getLogger(__spec__.name)
 class TCPDumpModule(BaseModule):
 	def start(self):
 		interface = self._ctrlr.config["interfaces"]["dut"]
-		filesize_mb = 10
+		filesize_mb = self._args.get("filesize_mb", 10)
 		_log.info("Starting tcpdump on %s, maximum PCAP filesize %d MB", interface, filesize_mb)
 
 		procout = None if _log.isEnabledFor(logging.DEBUG) else subprocess.DEVNULL

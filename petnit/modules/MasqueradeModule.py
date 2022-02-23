@@ -33,7 +33,7 @@ class MasqueradeModule(BaseModule):
 			print(str(value), file = f)
 
 	def start(self):
-		output_interface = self._args["output_interface"] if (self._args is not None) else self._ctrlr.config["interfaces"]["egress"]
+		output_interface = self._args.get("output_interface", self._ctrlr.config["interfaces"]["egress"])
 		_log.info("Enabling IP masquerading with egress interface %s", output_interface)
 		self._set_ipv4_forward("1")
 		self._rules = IPTablesRules()

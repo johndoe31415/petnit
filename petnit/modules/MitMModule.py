@@ -34,10 +34,11 @@ class MitMModule(BaseModule):
 			print(str(value), file = f)
 
 	def start(self):
-		mitm_hosts = [ ]
-		target_ports = [ 443 ]
+		mitm_hosts = self._args.get("hosts", [ ])
+		target_ports = self._args.get("ports", [ 443 ])
+		local_port = self._args.get("local_port", 9999)
 		interface = self._ctrlr.config["interfaces"]["dut"]
-		_log.info("Starting MitM on %s for hosts %s and target ports %s", interface, mitm_hosts, target_ports)
+		_log.info("Starting MitM on %s for hosts %s and target ports %s; ratched listening on port %d", interface, mitm_hosts, target_ports, local_port)
 
 		cmd = [ "ratched" ]
 		if len(mitm_hosts) > 0:
@@ -53,7 +54,7 @@ class MitMModule(BaseModule):
 		self._set_local_net_forward("1")
 		self._ipt = IPTablesRules()
 		for target_port in target_ports:
-			self._ipt.add("nat", "PREROUTING", [ "-i", interface, "-p", "tcp", "--dport", str(target_port), "-j", "DNAT", "--to", "127.0.0.1:9999" ])
+			self._ipt.add("nat", "PREROUTING", [ "-i", interface, "-p", "tcp", "--dport", str(target_port), "-j", "DNAT", "--to", "127.0.0.1:%d" % (local_port) ])
 
 	def stop(self):
 		self._ipt.remove_all()
